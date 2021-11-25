@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.1)
 
 project(tiny-process-library)
 
+set(DEFAULT_INSTALL_TARGETS ON)
+if (CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  set(DEFAULT_INSTALL_TARGETS OFF)
+endif()
+set(INSTALL_TARGETS ${DEFAULT_INSTALL_TARGETS} CACHE BOOL "Install targets")
+
 if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
   option(BUILD_TESTING "set ON to build library tests" ON)
 else()
@@ -9,7 +15,7 @@ else()
 endif()
 
 add_library(tiny-process-library process.cpp)
-add_library(tiny-process-library::tiny-process-library ALIAS tiny-process-library)
+# add_library(tiny-process-library::tiny-process-library ALIAS tiny-process-library)
 
 if(MSVC)
   target_compile_definitions(tiny-process-library PRIVATE /D_CRT_SECURE_NO_WARNINGS)
@@ -35,7 +41,7 @@ target_include_directories(tiny-process-library PUBLIC $<BUILD_INTERFACE:${CMAKE
                                                        $<INSTALL_INTERFACE:include>)
 
 # if tiny-process-library is not a sub-project:
-if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+if(INSTALL_TARGETS)
   if(MSVC)
     add_definitions(/D_CRT_SECURE_NO_WARNINGS)
   else()
